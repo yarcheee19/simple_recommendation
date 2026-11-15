@@ -41,7 +41,14 @@ def handle_get_user(id: int, conn=Depends(get_conn)) -> UserGet:
     # TODO: Получить объект пользователя из БД с помощью функции get_user(conn, id)
     # TODO: Если пользователь не найден — выбросить HTTPException(404)
     # TODO: Вернуть объект класса User
-    ...
+    result = get_user(conn, id)
+    if result is not None:
+        return result
+    
+    raise HTTPException(
+        status_code=404, 
+        detail="user not found"
+    )
 
 
 @app.get("/post/{id}", response_model=PostGet)
@@ -61,7 +68,14 @@ def handle_get_post(id: int, conn=Depends(get_conn)) -> PostGet:
     # TODO: Получить пост из БД с помощью get_post(conn, id)
     # TODO: Если пост не найден — выбросить HTTPException(404)
     # TODO: Вернуть объект класса Post
-    ...
+    result = get_post(conn, id)
+    if result is not None:
+        return result
+    
+    raise HTTPException(
+        status_code=404, 
+        detail="post not found"
+    )
 
 
 @app.get("/user/{id}/feed", response_model=List[FeedGet])
@@ -80,7 +94,9 @@ def handle_get_user_feed(
     """
     # TODO: Получить список действий из БД с помощью get_feed(conn, user_id=id, limit=limit)
     # TODO: Вернуть полученный список объектов класса Feed
-    ...
+    result = get_feed(conn, id, None, limit)
+    return result
+
 
 
 @app.get("/post/{id}/feed", response_model=List[FeedGet])
@@ -100,7 +116,8 @@ def handle_get_post_feed(
     """
     # TODO: Получить действия с постом через get_feed(conn, post_id=id, limit=limit)
     # TODO: Вернуть полученный список объектов класса Feed
-    ...
+    result = get_feed(conn, None, id, limit)
+    return result
 
 
 @app.get("/post/recommendations/", response_model=List[PostGet])
@@ -122,4 +139,5 @@ def recommended_posts(
     """
     # TODO: Получить список популярных постов с помощью get_recommended_feed(conn, id, limit)
     # TODO: Вернуть полученный список объектов класса Post
-    ...
+    result = get_recommended_feed(conn, id, limit)
+    return result
